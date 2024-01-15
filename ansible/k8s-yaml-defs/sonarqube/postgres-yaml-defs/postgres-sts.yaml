@@ -1,0 +1,62 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: sonarqube
+spec:
+  serviceName: postgres
+  selector:
+    matchLabels:
+      app: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:13
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          lifecycle:
+            postStart:
+              exec:
+               command: ["/bin/sh", "-c", "echo $PGPASS > /root/.pgpass && chmod 600 /root/.pgpass"]
+          env:
+           - name: POSTGRES_USER
+             valueFrom:
+               secretKeyRef:
+                 name: postgres-secrets
+                 key: username
+           - name: POSTGRES_PASSWORD
+             valueFrom:
+               secretKeyRef:
+                 name: postgres-secrets
+                 key: password
+           - name: POSTGRES_DB
+             valueFrom:
+               secretKeyRef:
+                name: postgres-secrets
+                key: postgres_db
+           - name: PGPASS
+             valueFrom:
+               secretKeyRef:
+                 name: postgres-secrets
+                 key: pgpass
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+      nodeSelector:
+        postgres: "true"
+      tolerations: 
+        - key: "postgres"
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"

@@ -1,0 +1,23 @@
+#This playbook is only for PROD and TEST envs
+#Do not run in the Playground environment
+- name: Tainting k8s worker nodes to prevent non-dedicated workloads being scheduled on tainted nodes
+  hosts: k8s-controlplane
+  become: false
+  tasks:
+    - name: Taint node "sdo-test-kube-w-sq-postgres-01"
+      kubernetes.core.k8s_taint:
+        state: present
+        name: sdo-test-kube-w-sq-postgres-01
+        taints:
+        - effect: NoSchedule
+          key: "postgres"
+          value: "true"
+    - name: Taint node "sdo-test-kube-w-sq-sonar-01"
+      kubernetes.core.k8s_taint:
+        state: present
+        name: sdo-test-kube-w-sq-sonar-01
+        taints:
+        - effect: NoSchedule
+          key: "sonarqube"
+          value: "true"
+

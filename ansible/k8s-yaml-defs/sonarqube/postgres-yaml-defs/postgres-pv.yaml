@@ -1,0 +1,18 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-pv-volume
+  namespace: sonarqube
+  labels:
+    type: local
+    app: postgres
+spec:
+  storageClassName: manual
+  #Modify storage capacity to your need
+  capacity:
+    storage: 250Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"

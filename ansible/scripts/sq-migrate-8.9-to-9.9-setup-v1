@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# This script migrates SQ-8.9 to SQ-9.9 LTS 
+# v 1.0  - run with root privileges
+# Author: Askhat Seitenov
+Sudo kubectl delete svc -n sonarqube sonarqube
+Sudo kubectl delete sts -n sonarqube sonarqube
+sleep 1m
+sudo curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
+helm repo update
+#make sure values.yaml file is provided and exist 
+helm upgrade --install -n sonarqube sonar sonarqube/sonarqube -f values.yaml

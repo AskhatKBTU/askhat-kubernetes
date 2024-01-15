@@ -1,0 +1,30 @@
+
+ - name: Copy db file
+   hosts: k8s-controlplane
+   tasks:    
+   - name: Copy Remote-To-Remote (from serverA to serverB)
+     #Please make sure file is available in the src path and modify the filename accordingly
+     synchronize: src=/root/db-copy/sonardb.tar dest=/root/sonardb.tar
+     delegate_to: localhost
+     
+ - name: Commands for restore from backup
+   hosts: k8s-controlplane
+   become: false
+   tasks:
+    - name: Pause for 7 minutes to wait for DB copy is synced
+      ansible.builtin.pause:
+        minutes: 7  
+    - name: Execute kubectl commands
+      command: "{{ item }}"
+      with_items:
+      - kubectl exec -it -n sonarqube postgres-0 -- psql -U sonar -d sonardb -c  "CREATE ROLE postgres WITH PASSWORD 'postgres';" 
+      - kubectl exec -it -n sonarqube postgres-0 -- psql -U sonar -d sonardb -c  "ALTER USER postgres WITH superuser;"
+      - kubectl exec -it -n sonarqube postgres-0 -- psql -U sonar -d sonardb -c  "ALTER USER postgres WITH LOGIN;" 
+      - kubectl exec -it -n sonarqube postgres-0 -- psql -U sonar -d sonardb -c  "ALTER ROLE postgres WITH LOGIN;" 
+      - kubectl exec -it -n sonarqube postgres-0 -- psql -U sonar -d sonardb -c  "ALTER USER sonar WITH superuser;" 
+      - kubectl cp /root/sonardb.tar -n sonarqube postgres-0:/root
+    - name: Restoring POSTGRESQL db for SQ 
+      ansible.builtin.script: /root/sdo-kubernetes-cicd/ansible/scripts/backups/restore-from-backup/sonarqube-postgres-restore-from-backup
+    - name: Pause for 10 minutes to wait for DB is getting restored
+      ansible.builtin.pause:
+        minutes: 10

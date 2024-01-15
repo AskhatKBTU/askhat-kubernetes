@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# This script designed to backup postgresql for sonarqube
+# v 1.0  - run with root privileges 
+
+kubectl exec -it -n sonarqube postgres-0 -- pg_restore --clean --if-exists -U sonar -d sonardb < /root/sonardb.tar
+

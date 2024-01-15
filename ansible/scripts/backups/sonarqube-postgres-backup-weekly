@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# This script designed to backup postgresql for sonarqube
+# v 1.0  - run with root privileges 
+
+mkdir -p /var/lib/postgresql/sonar-backup/weekly
+
+kubectl exec -it -n sonarqube-test postgres-0 -- pg_dump -U sonar sonardb > /var/lib/postgresql/sonar-backup/weekly/sq-pg-backup-$(date +"%m-%d-%Y-%H-%M").sql
+
+find /var/lib/postgresql/sonar-backup/weekly/* -mtime +93 -delete
+
+##mkdir -p /root/backup-sonar
+
+rsync -a --delete /var/lib/postgresql/backup-sonar root@172.29.109.95:~/backup-sonar

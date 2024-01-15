@@ -1,0 +1,115 @@
+---
+- name: 'This playbook will setup urls for RHEL8 yum repos and install basic packages on RHEL8 isntance'
+  #replace with k8s_test_all_nodes
+  hosts: k8s_test_all_nodes
+  become: true
+  tasks:
+    # - name: Create baseos.repo
+    #   ansible.builtin.file:
+    #     path: /etc/yum.repos.d/baseos.repo
+    #     state: touch
+    #     owner: root
+    #     group: root
+    #     mode: '0660'
+    # - name: Create appstream.repo
+    #   ansible.builtin.file:
+    #     path: /etc/yum.repos.d/appstream.repo
+    #     state: touch
+    #     owner: root
+    #     group: root
+    #     mode: '0660'
+    # - name: Create highavailability.repo
+    #   ansible.builtin.file:
+    #     path: /etc/yum.repos.d/highavailability.repo
+    #     state: touch
+    #     owner: root
+    #     group: root
+    #     mode: '0660'
+    # - name: Create supplementary.repo
+    #   ansible.builtin.file:
+    #     path: /etc/yum.repos.d/supplementary.repo
+    #     state: touch
+    #     owner: root
+    #     group: root
+    #     mode: '0660'
+    # - name: Create epel.repo
+    #   ansible.builtin.file:
+    #     path: /etc/yum.repos.d/epel.repo
+    #     state: touch
+    #     owner: root
+    #     group: root
+    #     mode: '0660'
+    # - name: Update url block for baseos.repo
+    #   ansible.builtin.blockinfile:
+    #    path: /etc/yum.repos.d/baseos.repo
+    #    block: |
+    #     [baseos-rpms]
+    #     name=baseos-rpms
+    #     baseurl=http://ffdctnas.corp.root.ipc.com/shares/export/repos/rhel-8/rhel-8-for-x86_64-baseos-rpms
+    #     enable=1
+    #     gpgcheck=0
+    # - name: Update url block for appstream.repo
+    #   ansible.builtin.blockinfile:
+    #    path: /etc/yum.repos.d/appstream.repo
+    #    block: |
+    #     [appstream-rpms]
+    #     name=appstream-rpms
+    #     baseurl=http://ffdctnas.corp.root.ipc.com/shares/export/repos/rhel-8/rhel-8-for-x86_64-appstream-rpms
+    #     enable=1
+    #     gpgcheck=0 
+    # - name: Update url block for highavailability.repo
+    #   ansible.builtin.blockinfile:
+    #    path: /etc/yum.repos.d/highavailability.repo
+    #    block: |
+    #     [highavailability-rpms]
+    #     name=highavailability-rpms
+    #     baseurl=http://ffdctnas.corp.root.ipc.com/shares/export/repos/rhel-8/rhel-8-for-x86_64-highavailability-rpms
+    #     enable=1
+    #     gpgcheck=0    
+    # - name: Update url block for supplementary.repo
+    #   ansible.builtin.blockinfile:
+    #    path:  /etc/yum.repos.d/supplementary.repo
+    #    block: |
+    #     [supplementary-rpms]
+    #     name=supplementary-rpms
+    #     baseurl=http://ffdctnas.corp.root.ipc.com/shares/export/repos/rhel-8/rhel-8-for-x86_64-supplementary-rpms
+    #     enable=1
+    #     gpgcheck=0
+    # - name: Update url block for epel.repo
+    #   ansible.builtin.blockinfile:
+    #    path:  /etc/yum.repos.d/epel.repo
+    #    block: |
+    #     [epel-rpms]
+    #     name=epel-rpms
+    #     baseurl=http://ffdctnas.corp.root.ipc.com/shares/export/repos/rhel-8/epel-el8
+    #     enable=1
+    #     gpgcheck=0
+    - name: Install required base packages
+      ansible.builtin.yum:
+        name:
+         - firewalld
+         - wget
+         - yum-utils
+         - device-mapper-persistent-data
+         - lvm2
+         - yum-plugin-versionlock
+         - which
+         - at 
+         - net-tools
+         - nfs-utils
+         - rsync
+         - sssd
+         - expect
+         - tmux
+         - rpcbind
+         - open-vm-tools
+         - autofs
+         - python3
+        state: present
+    - name: Install pip3 package
+      ansible.builtin.yum:
+        name: python3-pip
+        state: present
+    - name: Install kubernetes package
+      ansible.builtin.command:
+        cmd: pip3 install kubernetes

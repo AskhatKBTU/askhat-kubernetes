@@ -1,0 +1,27 @@
+- name: 'Sonarqube prereq script execution'
+  hosts: k8s-worker1-sonarqube-sonarqube
+  become: false
+  tasks:
+    - name: Run sq prerequisite script
+      script: /root/sdo-kubernetes-cicd/ansible/scripts/sq-prereq-setup-v1
+
+- name: 'Sonarqube prereq script execution'
+  hosts: k8s_test_all_nodes
+  become: false
+  tasks:
+    - name: Run sq prerequisite script
+      command: systemctl stop firewalld
+
+- name: 'SonarQube deployment on Kubernetes cluster'
+  hosts: k8s-controlplane
+  become: false
+  tasks:
+    - name: Apply K8s resources for sonarqube server
+      kubernetes.core.k8s:
+        definition: "{{ lookup('template', '{{ item }}') | from_yaml }}"
+      with_fileglob:
+        - "/root/sdo-kubernetes-cicd/ansible/k8s-yaml-defs/sonarqube/sonarqube-yaml-defs/sonar-config.yaml"
+        - "/root/sdo-kubernetes-cicd/ansible/k8s-yaml-defs/sonarqube/sonarqube-yaml-defs/sonar-pv-data.yaml"
+        - "/root/sdo-kubernetes-cicd/ansible/k8s-yaml-defs/sonarqube/sonarqube-yaml-defs/sonar-pvc-data.yaml"
+        - "/root/sdo-kubernetes-cicd/ansible/k8s-yaml-defs/sonarqube/sonarqube-yaml-defs/sonar-svc.yaml"
+        - "/root/sdo-kubernetes-cicd/ansible/k8s-yaml-defs/sonarqube/sonarqube-yaml-defs/sonar-sts.yaml"

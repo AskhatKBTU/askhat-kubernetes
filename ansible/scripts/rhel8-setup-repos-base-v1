@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# This script designed to locate nas repos for RHEL 8
+# v 1.0  - run with root privileges
+# Author: Askhat Seitenov 
+
+
+#Adding b
+sudo cat <<EOF | sudo tee /etc/yum.repos.d/baseos.repo
+[baseos-rpms]
+name=baseos-rpms
+baseurl=http://ffdctnas.corp.root.ipc.com/shares/export/repos/rhel-8/rhel-8-for-x86_64-baseos-rpms
+enable=1
+gpgcheck=0
+EOF
+
+sudo cat <<EOF | sudo tee /etc/yum.repos.d/appstream.repo
+[appstream-rpms]
+name=appstream-rpms
+baseurl=http://ffdctnas.corp.root.ipc.com/shares/export/repos/rhel-8/rhel-8-for-x86_64-appstream-rpms
+enable=1
+gpgcheck=0
+EOF
+
+sudo cat <<EOF | sudo tee /etc/yum.repos.d/highavailability.repo
+[highavailability-rpms]
+name=highavailability-rpms
+baseurl=http://ffdctnas.corp.root.ipc.com/shares/export/repos/rhel-8/rhel-8-for-x86_64-highavailability-rpms
+enable=1
+gpgcheck=0
+EOF
+
+sudo cat <<EOF | sudo tee /etc/yum.repos.d/supplementary.repo
+[supplementary-rpms]
+name=supplementary-rpms
+baseurl=http://ffdctnas.corp.root.ipc.com/shares/export/repos/rhel-8/rhel-8-for-x86_64-supplementary-rpms
+enable=1
+gpgcheck=0
+EOF
+
+
+sudo cat <<EOF | sudo tee /etc/yum.repos.d/epel.repo
+[epel-rpms]
+name=epel-rpms
+baseurl=http://ffdctnas.corp.root.ipc.com/shares/export/repos/rhel-8/epel-el8
+enable=1
+gpgcheck=0
+EOF
+
+yum -y update
+
+yum -y install yum-utils dnsutils vim
+
+yum -y install yum-plugin-versionlock wget  which at nfs-utils rsync
+
+yum -y install sssd expect tmux rpcbind open-vm-tools autofs python3
+
+pip3 install kubernetes

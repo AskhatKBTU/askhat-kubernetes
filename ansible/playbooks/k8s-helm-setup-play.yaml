@@ -1,0 +1,11 @@
+- name: 'This playbook sets up helm software on k8s control plane node'
+  hosts: k8s-controlplane
+  become: true
+  tasks:    
+    - name: Install helm software
+      command: "{{ item }}"
+      with_items:
+        - sudo curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        - sudo chmod 700 get_helm.sh
+        - sudo ./get_helm.sh
+        - sudo rm -y get_helm.sh

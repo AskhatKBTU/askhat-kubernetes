@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sonar-data
+  namespace: sonarqube
+  labels: 
+    app: sonarqube
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  resources:
+  #Request should be equal or less than PV capacity
+    requests:
+      storage: 80Gi
+

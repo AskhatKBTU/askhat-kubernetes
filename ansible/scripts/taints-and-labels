@@ -1,0 +1,24 @@
+
+#Taint Postgres Node
+#kubectl taint nodes sdo-rhel8-kube-w-sq-postgres-01 postgres=true:NoSchedule
+
+#Label Postgres Node
+kubectl label node sdo-rhel8-kube-w-sq-postgres-01 postgres=true  
+
+#Taint SonarQube Node
+#kubectl taint nodes sdo-rhel8-kube-w-sq-sonar-01 sonarqube=true:NoSchedule
+
+#Label SonarQube Node
+kubectl label node sdo-rhel8-kube-w-sq-sonar-01 sonarqube=true
+
+#Taint Monitoring Node
+#kubectl taint nodes sdo-test-kube-w-metrics-prom-01  monitoring=true:NoSchedule
+
+#Label Monitoring Node
+#kubectl label node sdo-test-kube-w-metrics-prom-01  monitoring=true
+
+#Taint Logs Management Node
+#kubectl taint nodes sdo-test-kube-w-logs-efk-01 efk=true:NoSchedule
+
+#Label Logs Management Node
+#kubectl label node sdo-test-kube-w-logs-efk-01 efk=true

@@ -1,0 +1,33 @@
+- name: Initializing Kubernetes Controlplane (master) node with kubeadm init 
+  hosts: k8s-controlplane
+  become: true
+  vars_files:
+  - ../variables/env-variables-k8s-setup 
+  tasks:
+  - name: Pulling images required for setting up a Kubernetes cluster
+    shell: kubeadm config images pull
+
+  - name: Initializing Kubernetes cluster
+    shell: kubeadm init --apiserver-advertise-address {{ad_addr}} --pod-network-cidr={{cidr_v}}
+    register: output
+
+  - name: Storing Logs and Generated token for future purpose.
+    local_action: copy content={{ output.stdout }} dest={{ token_file }}
+
+  - name: Executing commands to activate kubectl
+    shell: |
+      mkdir -p $HOME/.kube
+      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+      sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+  - name: Installing Calico CNI, restarting Kubelet and Daemons
+    shell: |
+      curl https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml -O
+      kubectl apply -f calico.yaml
+      sudo systemctl restart kubelet
+      sudo systemctl daemon-reload
+
+  - name: Install helm software
+    shell: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+

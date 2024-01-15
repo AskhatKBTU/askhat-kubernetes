@@ -1,0 +1,19 @@
+---
+- name: Joining K8s worker nodes to cluster
+  hosts: k8s_worker_nodes
+  become: true
+  vars_files:
+  - ../variables/env-variables-k8s-setup 
+  tasks:
+  - name: Copying token to worker nodes
+    copy: src={{ token_file }} dest=join_token
+
+  - name: Joining worker nodes with kubernetes master
+    shell: "grep -i -A 2 'kubeadm join' join_token | sh -"
+
+  - name: Restarting Kubelet and Daemons
+    shell: |
+      sudo systemctl restart kubelet
+      sudo systemctl daemon-reload
+
+ 

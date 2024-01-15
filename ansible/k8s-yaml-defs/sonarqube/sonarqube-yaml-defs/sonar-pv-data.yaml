@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sonar-pv-data
+  namespace: sonarqube
+spec:
+  storageClassName: standard
+  #Modify storage capacity to your need
+  capacity:
+    storage: 80Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+#Retain reclaim policy to keep the pods data even after pods are destroyed
+  persistentVolumeReclaimPolicy: Retain

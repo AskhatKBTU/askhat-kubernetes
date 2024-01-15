@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sonar-config
+  namespace: sonarqube
+  labels:
+    app: sonarqube
+data:
+  url: jdbc:postgresql://postgres.sonarqube.svc.cluster.local:5432/sonardb
+  SONAR_SECURITY_REALM: LDAP
+  LDAP_URL: ldap://ldap-mh-1.ipc.com:389
+  LDAP_USER_BASEDN: ou=People,dc=ipc,dc=com
+  LDAP_USER_REQUEST: uid={0}
+  LDAP_USER_EMAILATTRIBUTE: mail

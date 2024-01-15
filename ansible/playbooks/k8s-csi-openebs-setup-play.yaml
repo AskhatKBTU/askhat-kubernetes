@@ -1,0 +1,7 @@
+
+ - name: Setting up OpenEBS CSI Driver
+   hosts: k8s-controlplane
+   become: true
+   tasks:
+    - name: Install OpenEBS operator and setting openebs-hostpath as default StorageClass
+      ansible.builtin.script: /root/sdo-kubernetes-cicd/ansible/scripts/k8s-openebs-setup-v1

@@ -1,0 +1,13 @@
+#lvmsetup
+lsblk -f
+yum install -y lvm2
+cat /etc/fstab
+umount /home
+lvchange -an /dev/mapper/rhel-home
+lvremove /dev/mapper/rhel-home
+lvcreate -L +100G --name home rhel
+lsblk -f
+lvcreate -L +100G --name csi rhel
+lsblk -f
+mkfs -t xfs /dev/rhel/home
+

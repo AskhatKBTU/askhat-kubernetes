@@ -1,0 +1,87 @@
+- name: PostgreSQL backup for SonarQube
+  hosts: k8s-controlplane
+  become: false
+  tasks:   
+    #Daily backup
+    - name: Create directory for backup scripts
+      command: mkdir -p /root/scripts/sonarqube/backups/
+    - name: Create daily backup script file
+      ansible.builtin.file:
+        path: /root/scripts/sonarqube/backups/sonarqube-postgres-backup-daily
+        state: touch
+        owner: root
+        group: root
+        mode: '0760'
+    - name: Updating daily backup script file with content
+      ansible.builtin.blockinfile:
+       path: /root/scripts/sonarqube/backups/sonarqube-postgres-backup-daily
+       block: |
+          #!/bin/bash
+          #
+          # This script designed to backup postgresql for sonarqube daily
+          # v 1.0  - run with root privileges 
+          mkdir -p /var/lib/postgresql/sonar-backup/daily
+          kubectl exec -it -n sonarqube postgres-0 -- pg_dump -U sonar -F t sonardb > /var/lib/postgresql/sonar-backup/daily/sq-pg-backup-$(date +"%m-%d-%Y-%H-%M").tar
+    - name: Schedule daily backups in crontab
+      ansible.builtin.cron:
+        name: "Daily backup postgres sq"
+        minute: "0"
+        hour: "2"
+        job: "/root/scripts/sonarqube/backups/sonarqube-postgres-backup-daily"
+
+   #Weekly backup     
+    - name: Create weekly backup script file
+      ansible.builtin.file:
+        path: /root/scripts/sonarqube/backups/sonarqube-postgres-backup-weekly
+        state: touch
+        owner: root
+        group: root
+        mode: '0760'
+    - name: Updating weekly backup script file with content
+      ansible.builtin.blockinfile:
+       path: /root/scripts/sonarqube/backups/sonarqube-postgres-backup-weekly
+       block: |
+          #!/bin/bash
+          #
+          # This script designed to backup postgresql for sonarqube weekly
+          # v 1.0  - run with root privileges 
+          mkdir -p /var/lib/postgresql/sonar-backup/weekly
+          kubectl exec -it -n sonarqube postgres-0 -- pg_dump -U sonar -F t sonardb > /var/lib/postgresql/sonar-backup/weekly/sq-pg-backup-$(date +"%m-%d-%Y-%H-%M").tar
+    - name: Schedule weekly backups in crontab on kubernetes master
+      ansible.builtin.cron:
+        name: "Weekly backup postgres sq"
+        minute: "0"
+        hour: "0"
+        weekday: "1"
+        job: "/root/scripts/sonarqube/backups/sonarqube-postgres-backup-weekly"
+
+   #Monthly backup     
+    - name: Create monthly backup script file
+      ansible.builtin.file:
+        path: /root/scripts/sonarqube/backups/sonarqube-postgres-backup-monthly
+        state: touch
+        owner: root
+        group: root
+        mode: '0760'
+    - name: Updating monthly backup script file with content
+      ansible.builtin.blockinfile:
+       path: /root/scripts/sonarqube/backups/sonarqube-postgres-backup-monthly
+       block: |
+          #!/bin/bash
+          #
+          # This script designed to backup postgresql for sonarqube monthly
+          # v 1.0  - run with root privileges 
+          mkdir -p /var/lib/postgresql/sonar-backup/monthly
+          kubectl exec -it -n sonarqube postgres-0 -- pg_dump -U sonar -F t sonardb > /var/lib/postgresql/sonar-backup/monthly/sq-pg-backup-$(date +"%m-%d-%Y-%H-%M").tar
+    - name: Schedule monthly backups in crontab
+      ansible.builtin.cron:
+        name: "Monthly backup postgres sq"
+        minute: "0"
+        hour: "0"
+        month: "1"
+        job: "/root/scripts/sonarqube/backups/sonarqube-postgres-backup-monthly"
+
+#    - name: Execute a command (do not uncomment)
+#      ansible.builtin.script: /root/kubernetes-sdo/ansible/scripts/sonarqube-postgres-backup-daily
+
+

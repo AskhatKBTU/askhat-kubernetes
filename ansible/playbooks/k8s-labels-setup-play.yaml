@@ -1,0 +1,11 @@
+- name: Labeling K8s nodes for targeted scheduling
+  hosts: k8s-controlplane
+  become: false
+  tasks:
+    - name: Labeling nodes
+      command: "{{ item }}"
+      with_items:
+        - kubectl label node sdo-test-kube-w-sq-postgres-01 postgres=true  
+        - kubectl label node sdo-test-kube-w-sq-sonar-01 sonarqube=true
+        - kubectl label node sdo-test-kube-w-metrics-prom-01 monitoring=true
+#       - kubectl label node sdo-test-kube-w-logs-efk-01 logs=true

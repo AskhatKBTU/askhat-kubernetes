@@ -1,0 +1,10 @@
+---
+- name: 'Prometheus operator setup play'
+  hosts: k8s-controlplane
+  become: false
+  tasks:
+    - name: Apply K8s resources for postgres (SonarQube backend)
+      kubernetes.core.k8s:
+        definition: "{{ lookup('template', '{{ item }}') | from_yaml }}"
+      with_fileglob:
+        - "/root/sdo-kubernetes-cicd/ansible/k8s-yaml-defs/prometheus-grafana/manifests/setup/*.yaml"

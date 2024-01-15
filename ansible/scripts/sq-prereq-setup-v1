@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# This script increases max heap size to meet SQ requirements
+# v 1.0  - run on SonarQube and PostgreSQL nodes
+
+#SonarQube pre-requisite minimum max heap map count and fs.file_max
+cat <<EOF | sudo tee /etc/sysctl.d/99-sonarqube.conf
+vm.max_map_count=524288
+fs.file-max=131072
+EOF
+
+#Apply
+sudo sysctl --system

@@ -1,0 +1,30 @@
+---
+  - name: 'Setting up yum repos on RHEL8 instances and install base packages'
+    import_playbook: ./playbooks/rhel8-base-repos-play.yaml
+  - name: 'Setting up kubernetes cluster prerequisites on each node'
+    import_playbook: ./playbooks/k8s-base-prereq-setup-play.yaml
+  - name: 'Initializing K8s Control Plane (master) node' 
+    import_playbook: ./playbooks/k8s-master-init-setup-play.yaml
+  - name: 'Joining K8s worker nodes and activating network'
+    import_playbook: ./playbooks/k8s-workers-join-play.yaml
+#  - name: Labeling K8s nodes for targeted scheduling
+#    import_playbook: ./playbooks/k8s-labels-setup-play.yaml
+#   Do not use Taint playbooks for playground environment
+#   - name: 'Taint k8s nodes'
+#    import_playbook: ./playbooks/k8s-taints-setup-play.yaml
+#   - name: 'Setting up namespaces'
+#    import_playbook: ./playbooks/k8s-namespaces-setup-play.yaml
+#   - name: 'Deploying PostgreSQL 13'
+#    import_playbook: ./playbooks/postgres-13-deploy-play.yaml
+#   - name: 'Restoring PostgreSQL from backup'
+#    import_playbook: ./playbooks/sonarqube-postgres-restore-from-backup-play.yaml
+#   - name: 'Deploying Sonarqube 8.9 LTS'
+#    import_playbook: ./playbooks/sonarqube-8.9-deploy-play.yaml
+#   - name: 'Setting backup CRONjobs'
+#    import_playbook: ./playbooks/sonarqube-postgres-backup-play.yaml
+#   - name: 'Install OpenEBS CSI for dynamic storage provisioning'
+#    import_playbook: ./playbooks/k8s-csi-openebs-setup-play.yaml
+
+
+
+

@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# This script designed to backup postgresql for sonarqube
+# v 1.0  - run with root privileges 
+
+sudo kubectl apply -f https://openebs.github.io/charts/openebs-operator.yaml
+
+sudo kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+      
